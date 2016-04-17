@@ -1,6 +1,7 @@
 import kha.Assets;
 import kha.Image;
 import kha.graphics2.Graphics;
+import kha.FastFloat;
 
 class Player {
 	private var playerSprite: Sprite;	
@@ -9,9 +10,9 @@ class Player {
 		playerSprite = new Sprite(0, 0, Assets.images.ufo);
 	}
 	
-	public function update() {
-		playerSprite.move(1,0);		
-		playerSprite.update();
+	public function update(delta: FastFloat) {
+		playerSprite.move(200 * delta, 200 * delta);		
+		playerSprite.update(delta);
 	}
 	
 	public function render(g: Graphics) {

@@ -1,4 +1,5 @@
 import kha.graphics2.Graphics;
+import kha.FastFloat;
 
 class Scene {
 	public function new() {		
@@ -8,7 +9,7 @@ class Scene {
 	
 	public function leaveScene() {}
 	
-	public function update() {
+	public function update(delta: FastFloat) {
 		
 	}
 	

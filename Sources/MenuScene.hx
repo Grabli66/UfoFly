@@ -1,5 +1,6 @@
 import kha.graphics2.Graphics;
 import kha.Color;
+import kha.FastFloat;
 
 class MenuScene extends Scene {
 	private var bgColor = Color.fromValue(0x000000);		
@@ -8,7 +9,7 @@ class MenuScene extends Scene {
 		
 	}
 	
-	public override function update() {
+	public override function update(delta: FastFloat) {
 		
 	}
 	

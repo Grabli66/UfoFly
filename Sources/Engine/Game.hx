@@ -7,20 +7,23 @@ import kha.Image;
 import kha.Color;
 import kha.Scaler;
 import kha.Assets;
+import kha.FastFloat;
 
 class Game {
 	private static var backbuffer: Image;	
-	
 	private static var scenes: Map<String, Scene>;
 	private static var currentScene: Scene;
 	
 	private static var onReadyCall: Void -> Void; 
 	private static var lock = false; 
 	
+	private static var lastTime: FastFloat;
+	
 	private function new() {}
 	
 	public static function init(w: Int, h: Int, onReady: Void->Void) {
-		scenes = new Map<String, Scene>();		
+		scenes = new Map<String, Scene>();
+		lastTime = 0;		
 		onReadyCall = onReady;
 		lock = true;
 		backbuffer = Image.createRenderTarget(w, h);
@@ -31,7 +34,6 @@ class Game {
 		lock = false;		
 		onReadyCall();		
 		System.notifyOnRender(render);
-		Scheduler.addTimeTask(update, 0, 1 / 60);
 	}
 	
 	public static function addScene(name: String, scene: Scene) {
@@ -49,11 +51,17 @@ class Game {
 	private static function update(): Void {		
 		if (lock) return;		
 		
-		currentScene.update();
+		var currentTime = Scheduler.time();
+		var delta = currentTime - lastTime;
+		lastTime = currentTime;
+		
+		currentScene.update(delta);
 	}
 
 	private static function render(framebuffer: Framebuffer): Void {		
 		if (lock) return;		
+		
+		update();
 		
 		var g = backbuffer.g2;				
 		currentScene.render(g);		

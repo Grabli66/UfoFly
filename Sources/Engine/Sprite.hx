@@ -19,7 +19,7 @@ class Sprite {
 		position.y += y;
 	}
 	
-	public function update() {}
+	public function update(delta: FastFloat) {}
 	
 	public function render(g: Graphics) {
 		g.pushTranslation(position.x, position.y);

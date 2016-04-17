@@ -1,4 +1,4 @@
-var project = new Project('New Project');
+var project = new Project('UfoFly');
 project.addAssets('Assets/**');
 project.addSources('Sources');
 project.addSources('Sources/Engine');

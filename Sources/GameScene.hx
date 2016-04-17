@@ -2,6 +2,7 @@ import kha.graphics2.Graphics;
 import kha.Color;
 import kha.Image;
 import kha.Assets;
+import kha.FastFloat;
 
 class GameScene extends Scene {
 	private var bgColor = Color.fromValue(0x000000);
@@ -13,8 +14,8 @@ class GameScene extends Scene {
 		background = Assets.images.game_bg;
 	}
 	
-	public override function update() {		
-		player.update();
+	public override function update(delta: FastFloat) {		
+		player.update(delta);
 	}
 	
 	public override function render(g: Graphics) {
