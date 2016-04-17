@@ -326,9 +326,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710675"
-     inkscape:cx="-265.64721"
-     inkscape:cy="2072.4151"
+     inkscape:zoom="0.24999999"
+     inkscape:cx="829.10214"
+     inkscape:cy="1752.0143"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -12755,5 +12755,23 @@
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="sssssssssssss" />
     </g>
+    <circle
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path5943"
+       cx="-1055.6897"
+       cy="-229.88589"
+       r="79.195961"
+       inkscape:export-filename="/home/grabli66/Workspace/haxe/ufofly/Assets/up_button"
+       inkscape:export-xdpi="89.988327"
+       inkscape:export-ydpi="89.988327" />
+    <circle
+       r="38.441071"
+       cy="-230.59302"
+       cx="-1057.104"
+       id="circle5945"
+       style="fill:#008000;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-filename="/home/grabli66/Workspace/haxe/ufofly/Assets/up_button"
+       inkscape:export-xdpi="89.988327"
+       inkscape:export-ydpi="89.988327" />
   </g>
 </svg>

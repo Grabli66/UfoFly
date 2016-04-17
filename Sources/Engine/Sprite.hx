@@ -6,12 +6,24 @@ import kha.Image;
 class Sprite {
 	private var position: FastVector2;
 	private var rotation: FastFloat;
-	private var image: Image;
+	private var image: Image;	
 	
 	public function new(x, y: FastFloat, image: Image) {
 		position = new FastVector2(x,y);
 		rotation = 0;
 		this.image = image;		 
+	}
+	
+	public function getPosition(): FastVector2 {
+		return position;
+	}
+	
+	public function getWidth(): FastFloat {
+		return image.width;
+	}
+	
+	public function getHeight(): FastFloat {
+		return image.height;
 	}
 	
 	public function move(x, y: FastFloat) {

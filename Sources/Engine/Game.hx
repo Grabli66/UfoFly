@@ -8,6 +8,10 @@ import kha.Color;
 import kha.Scaler;
 import kha.Assets;
 import kha.FastFloat;
+import kha.input.Keyboard;
+import kha.input.Mouse;
+import kha.input.Surface;
+import kha.Key;
 
 class Game {
 	private static var backbuffer: Image;	
@@ -16,6 +20,8 @@ class Game {
 	
 	private static var onReadyCall: Void -> Void; 
 	private static var lock = false; 
+	private static var aspectX: Float = 0;
+	private static var aspectY: Float = 0;
 	
 	private static var lastTime: FastFloat;
 	
@@ -23,18 +29,40 @@ class Game {
 	
 	public static function init(w: Int, h: Int, onReady: Void->Void) {
 		scenes = new Map<String, Scene>();
-		lastTime = 0;		
+		lastTime = Scheduler.time();
+		aspectX = Main.WORK_WIDTH / Main.WINDOW_WIDTH;	
+		aspectY = Main.WORK_HEIGHT / Main.WINDOW_HEIGHT;	
 		onReadyCall = onReady;
 		lock = true;
 		backbuffer = Image.createRenderTarget(w, h);
 		Assets.loadEverything(loadFinish);						
 	}	
 	
+	private static function onKeyDown(key: Key, char: String) {
+		currentScene.onKeyDown(key, char);
+	}
+	
+	private static function onMouseDown(button, x, y: Int) {		
+		var nx:Int = Math.round(x * aspectX);
+		var ny:Int = Math.round(y * aspectY);
+		currentScene.onMouseDown(button, nx, ny);		
+	}
+	
+	private static function onTouchDown(index, x, y: Int) {		
+		var nx:Int = Math.round(x * aspectX);
+		var ny:Int = Math.round(y * aspectY);
+		currentScene.onTouchDown(index, nx, ny);		
+	}
+	
 	private static function loadFinish() {		
 		lock = false;		
-		onReadyCall();		
+		onReadyCall();
+				
 		System.notifyOnRender(render);
-	}
+		Keyboard.get().notify(onKeyDown, null);
+		Mouse.get().notify(onMouseDown, null, null, null);
+		Surface.get().notify(onTouchDown, null, null);
+	}		
 	
 	public static function addScene(name: String, scene: Scene) {
 		scenes.set(name, scene);		
