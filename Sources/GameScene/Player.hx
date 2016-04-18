@@ -4,11 +4,16 @@ import kha.graphics2.Graphics;
 import kha.FastFloat;
 
 class Player {
-	private static inline var GRAVITY:FastFloat = 10;
-	private static inline var FLY_UP_IMPULS = 400;
+	private static inline var GRAVITY:FastFloat = 5;
+	private static inline var FLY_UP_IMPULS = 300;
+	private var playerSpeed = 50;
 	
 	private var playerSprite: Sprite;
 	private var accelY:FastFloat = 0;		
+	
+	public function getSpeed(): Int {
+		return playerSpeed;
+	}
 	
 	public function new() {
 		var img:Image = Assets.images.ufo;
@@ -18,7 +23,7 @@ class Player {
 	
 	public function update(delta: FastFloat) {
 		accelY += GRAVITY;
-		playerSprite.move(0, accelY * delta);		
+		playerSprite.move(playerSpeed * delta, accelY * delta);		
 		playerSprite.update(delta);
 	}
 	

@@ -4,49 +4,39 @@ import kha.Image;
 import kha.Assets;
 import kha.FastFloat;
 import kha.Key;
-
-class UILayer {
-	private var flyUpButton:Sprite;
-	private var flyLeftButton:Sprite;
-	private var flyRightButton:Sprite;
-	
-	public function new() {
-		var img = Assets.images.up_button;		
-		var posY = Main.WORK_HEIGHT - img.height - 20;
-		flyUpButton = new Sprite(20, posY, img);
-	//	flyLeftButton = new Sprite(0, 0, Assets.images.left_button);
-//		flyRightButton = new Sprite(0, 0, Assets.images.right_button);
-	}
-	
-	public function processMouse(x, y: Int) {		
-		
-	}
-	
-	public function render(g: Graphics) {
-		flyUpButton.render(g);
-	}
-}
+import kha.math.FastMatrix3;
 
 class GameScene extends Scene {
 	private var bgColor = Color.fromValue(0x000000);
 	private var background: Image;
 	private var uiLayer: UILayer;		
 	private var player: Player;
+	private var cameraMatrix: FastMatrix3;
+	
+	private var asteroid: Asteroid;
 	
 	public override function enterScene() {
 		player = new Player();
 		uiLayer = new UILayer();
 		background = Assets.images.game_bg;
+		asteroid = new Asteroid();
+		cameraMatrix = FastMatrix3.identity();		
 	}
 	
-	public override function update(delta: FastFloat) {		
+	public override function update(delta: FastFloat) {
+		cameraMatrix = cameraMatrix.multmat(FastMatrix3.translation(-player.getSpeed() * delta,0));				
 		player.update(delta);
+		asteroid.update(delta);
 	}
 	
 	public override function render(g: Graphics) {
-		g.begin(bgColor);		
-		g.drawImage(background,0,0);		
+		g.begin();		
+		g.drawImage(background,0,0);			
+		
+		g.pushTransformation(cameraMatrix);
 		player.render(g);
+		asteroid.render(g);
+		g.popTransformation();
 		uiLayer.render(g);
 		g.end();
 	}
