@@ -326,9 +326,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="-661.42637"
-     inkscape:cy="1542.1501"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="-2070.3099"
+     inkscape:cy="1381.6608"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -12766,5 +12766,38 @@
        inkscape:export-filename="/home/grabli66/Workspace/haxe/ufofly/Assets/asteroid.png"
        inkscape:export-xdpi="89.988327"
        inkscape:export-ydpi="89.988327" />
+    <rect
+       style="fill:#20386c;fill-opacity:1;stroke:none;stroke-width:2.7860806;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect10001"
+       width="1024"
+       height="768"
+       x="-2348.1069"
+       y="-633.53082" />
+    <rect
+       style="fill:#ddca00;fill-opacity:1;stroke:none;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect10003"
+       width="695.664"
+       height="14.593746"
+       x="-2184.8113"
+       y="-67.211807" />
+    <rect
+       y="-63.905922"
+       x="-2179.9856"
+       height="8.2319784"
+       width="523.49597"
+       id="rect10005"
+       style="fill:#006700;fill-opacity:1;stroke:none;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:82.16931152px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-2026.0076"
+       y="-225.55736"
+       id="text10007"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan10009"
+         x="-2026.0076"
+         y="-225.55736"
+         style="-inkscape-font-specification:'DejaVu Sans';font-family:'DejaVu Sans';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal">Loading...</tspan></text>
   </g>
 </svg>

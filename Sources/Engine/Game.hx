@@ -1,101 +1,196 @@
-package;
-
-import kha.Framebuffer;
-import kha.Scheduler;
 import kha.System;
+import kha.FastFloat;
+import kha.math.FastVector2;
+import kha.graphics2.Graphics;
+import kha.Framebuffer;
+import kha.Scaler;
 import kha.Image;
 import kha.Color;
-import kha.Scaler;
-import kha.Assets;
-import kha.FastFloat;
-import kha.input.Keyboard;
-import kha.input.Mouse;
-import kha.input.Surface;
-import kha.Key;
+import kha.Scheduler;
+
+enum AppState {
+	None;  // Ничего не происходит
+	Loader; // Происходит загрузка ресурсов
+	Work; // Обычная работа
+}
 
 class Game {
-	private static var backbuffer: Image;	
-	private static var scenes: Map<String, Scene>;
-	private static var currentScene: Scene;
+	public static inline var DEFAULT_WINDOW_NAME = "Game";
+	public static inline var DEFAULT_WINDOW_WIDTH = 1024;
+	public static inline var DEFAULT_WINDOW_HEIGHT = 768;
 	
-	private static var onReadyCall: Void -> Void; 
-	private static var lock = false; 
-	private static var aspectX: Float = 0;
-	private static var aspectY: Float = 0;
+	private static var gameApp: Game;
 	
-	private static var lastTime: FastFloat;
+	private var appState: AppState;	
+	private var backbuffer: Image;
+	private var bgColor:Color = Color.fromValue(0x000000);
+	private var loaderScreen: LoaderScreen;
 	
-	private function new() {}
+	private var lastTime: FastFloat = Scheduler.time();	
+	private var timeouts = new Array<TimeoutData>();
+	private var scenes = new Map<String, Scene>();
+	private var currentScene: Scene;
 	
-	public static function init(w: Int, h: Int, onReady: Void->Void) {
-		scenes = new Map<String, Scene>();
-		lastTime = Scheduler.time();
-		aspectX = Main.WORK_WIDTH / Main.WINDOW_WIDTH;	
-		aspectY = Main.WORK_HEIGHT / Main.WINDOW_HEIGHT;	
-		onReadyCall = onReady;
-		lock = true;
-		backbuffer = Image.createRenderTarget(w, h);
-		Assets.loadEverything(loadFinish);						
-	}	
-	
-	private static function onKeyDown(key: Key, char: String) {
-		currentScene.onKeyDown(key, char);
+	/*
+	*	Возвращает текущее приложение
+	*/
+	public static function getApp(): Game {
+		return gameApp;
 	}
 	
-	private static function onMouseDown(button, x, y: Int) {		
-		var nx:Int = Math.round(x * aspectX);
-		var ny:Int = Math.round(y * aspectY);
-		currentScene.onMouseDown(button, nx, ny);		
+	/*
+	*	Возвращает ширину рабочей области
+	*/
+	public function getWidth() : Int {
+		return backbuffer.width;
 	}
 	
-	private static function onTouchDown(index, x, y: Int) {		
-		var nx:Int = Math.round(x * aspectX);
-		var ny:Int = Math.round(y * aspectY);
-		currentScene.onTouchDown(index, nx, ny);		
+	/*
+	*	Возвращает высоту рабочей области
+	*/
+	public function getHeight() : Int {
+		return backbuffer.height;
 	}
 	
-	private static function loadFinish() {		
-		lock = false;		
-		onReadyCall();
-				
-		System.notifyOnRender(render);
-		Keyboard.get().notify(onKeyDown, null);
-		Mouse.get().notify(onMouseDown, null, null, null);
-		Surface.get().notify(onTouchDown, null, null);
-	}		
-	
-	public static function addScene(name: String, scene: Scene) {
-		scenes.set(name, scene);		
+	/*
+	*	Возвращает центр рабочей области 
+	*/
+	public function getCenter() : FastVector2 {
+		return new FastVector2(getWidth() / 2, getHeight() / 2);
 	}
 	
-	public static function switchScene(name: String) {
-		lock = true;
-		if (currentScene != null) currentScene.leaveScene();
-		currentScene = scenes.get(name);
-		currentScene.enterScene();
-		lock = false;
+	/*
+	*	Возвращает соотношение сторон рабочей области
+	*/
+	public function getAspect(): FastFloat {
+		return getWidth() / getHeight();
 	}
-
-	private static function update(): Void {		
-		if (lock) return;		
+	
+	/*
+	*	Засекает таймаут
+	*/
+	public function setTimeout(seconds: Int, onComplete: Void->Void) {
+		timeouts.push({
+			seconds: seconds,
+			onComplete: onComplete
+		});		
+	}
+	
+	public function new() {	
+		gameApp = this;	
+	}
+	
+	/*
+	*	Запускает работу приложения
+	*/ 
+	public function run() {
+		var configOptions = {
+			windowName: DEFAULT_WINDOW_NAME,
+			windowWidth: DEFAULT_WINDOW_WIDTH,
+			windowHeight: DEFAULT_WINDOW_HEIGHT
+		};
+		 
+		onConfig(configOptions);
 		
+		System.init(configOptions.windowName, configOptions.windowWidth, configOptions.windowHeight, function () {
+			var bufferOptions = {				
+				bufferWidth: System.pixelWidth,
+				bufferHeight: System.pixelHeight
+			}; 			
+			onChooseBufferSize(bufferOptions);			
+			backbuffer = Image.createRenderTarget(bufferOptions.bufferWidth, bufferOptions.bufferHeight);
+			onReady();
+			System.notifyOnRender(render);
+		});
+	}
+	
+	/*
+	*	Добавляет сцену
+	*/
+	public function addScene(name: String, scene: Scene) {
+		scenes.set(name, scene);
+	}
+	
+	/*
+	*	Делает сцену текущей
+	*/
+	public function setScene(name: String) {
+		currentScene = scenes.get(name);
+		appState = AppState.Work;
+	}
+	
+	public function update() {
+		// Получает дельту
 		var currentTime = Scheduler.time();
 		var delta = currentTime - lastTime;
-		lastTime = currentTime;
+		lastTime = currentTime;		
 		
-		currentScene.update(delta);
+		// Обрабатывает таймауты				
+		for (tm in timeouts) {			
+			tm.seconds -= delta;												
+			if (tm.seconds <= 0) {				
+				tm.onComplete();				
+				timeouts.remove(tm);
+			}
+		}
+		
+		switch (appState) {
+			case AppState.None: return;
+			case AppState.Loader: {				
+			}			 
+			case AppState.Work: {
+				currentScene.update(delta);
+			}			 
+		}
 	}
-
-	private static function render(framebuffer: Framebuffer): Void {		
-		if (lock) return;		
-		
+			
+	public function render(framebuffer: Framebuffer) {
 		update();
 		
-		var g = backbuffer.g2;				
-		currentScene.render(g);		
+		var g:Graphics = backbuffer.g2;
+		g.begin();
 		
-		framebuffer.g2.begin();
+		switch (appState) {
+			case AppState.None: {
+			}
+			case AppState.Loader: {				
+				loaderScreen.render(g);				
+			}			 
+			case AppState.Work: {
+				currentScene.render(g);
+			}			 
+		}
+		
+		g.end();
+		
+		framebuffer.g2.begin();		
 		Scaler.scale(backbuffer, framebuffer, System.screenRotation);
-		framebuffer.g2.end();		
+		framebuffer.g2.end();	
 	}
+	
+	/*
+	* Загружает ресурсы и отображает окно загрузки
+	*/ 
+	public function loadAssets(loader: LoaderScreen, onComplete: Void->Void) {
+		loaderScreen = loader;
+		loaderScreen.onComplete(onComplete);
+		appState = AppState.Loader;
+		loaderScreen.run();
+	}
+	
+	/*
+	*	Вызывается при выборе размера буффера
+	*/
+	public function onChooseBufferSize(options: BufferSizeOptions) {}
+	
+	
+	/*
+	* Абстрактрый метод для переопределения конфигурации
+	*/ 
+	public function onConfig(config: AppOptions) {}
+	
+	/*
+	* Вызывается когда окно готово для работы
+	*/	
+	public function onReady() {}
 }
