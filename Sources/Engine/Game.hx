@@ -15,21 +15,40 @@ enum AppState {
 }
 
 class Game {
+	// Название окна по-умолчанию
 	public static inline var DEFAULT_WINDOW_NAME = "Game";
+	// Ширина окна по-умолчанию
 	public static inline var DEFAULT_WINDOW_WIDTH = 1024;
+	// Высота окна по-умолчанию
 	public static inline var DEFAULT_WINDOW_HEIGHT = 768;
 	
+	// Текущая игра
 	private static var gameApp: Game;
-	
-	private var appState: AppState;	
-	private var backbuffer: Image;
-	private var bgColor:Color = Color.fromValue(0x000000);
-	private var loaderScreen: LoaderScreen;
-	
-	private var lastTime: FastFloat = Scheduler.time();	
+	// Состояние игры
+	private var appState: AppState;
+	// Буффер на котором всё рисуется	
+	private var backbuffer: Image;	
+	// Окно загрузки ресурсов
+	private var loaderScreen: LoaderScreen;	
+	// Предыдущее время, для расчета дельты
+	private var lastTime: FastFloat = Scheduler.time();
+	// Таймауты	
 	private var timeouts = new Array<TimeoutData>();
+	//	Сцены
 	private var scenes = new Map<String, Scene>();
-	private var currentScene: Scene;
+	// Текущая сцена
+	private var currentScene: Scene;	
+	// Контроллеры
+	private var controllers = new Array<IController>();
+	// Визульные элементы
+	private var visuals = new Array<IVisual>();
+	
+	/*
+	*	Конструктор
+	*/
+	public function new() {	
+		gameApp = this;	
+	}
 	
 	/*
 	*	Возвращает текущее приложение
@@ -74,11 +93,7 @@ class Game {
 			seconds: seconds,
 			onComplete: onComplete
 		});		
-	}
-	
-	public function new() {	
-		gameApp = this;	
-	}
+	}		
 	
 	/*
 	*	Запускает работу приложения
@@ -119,6 +134,34 @@ class Game {
 		appState = AppState.Work;
 	}
 	
+	/*
+	*	Добавляет визуальный элемент
+	*/
+	public function addVisual(visual: IVisual) {
+		
+	}
+	
+	/*
+	*	Добавляет удаляет визуальный элемент
+	*/
+	public function removeVisual(visual: IVisual) {
+		
+	}
+	
+	/*
+	*	Добавляет контроллер
+	*/
+	public function addController(controller: IController) {
+		controllers.push(controller);
+	}
+	
+	/*
+	*	Удаляет контроллер
+	*/
+	public function removeController(controller: IController) {
+		controllers.remove(controller);
+	}
+	
 	public function update() {
 		// Получает дельту
 		var currentTime = Scheduler.time();
@@ -139,11 +182,17 @@ class Game {
 			case AppState.Loader: {				
 			}			 
 			case AppState.Work: {
-				currentScene.update(delta);
+				// Обновляет контроллеры
+				for (controller in controllers) {
+					controller.update(delta);
+				}
 			}			 
 		}
 	}
 			
+	/*
+	*	Рисует визуальные элементы
+	*/
 	public function render(framebuffer: Framebuffer) {
 		update();
 		
@@ -151,13 +200,14 @@ class Game {
 		g.begin();
 		
 		switch (appState) {
-			case AppState.None: {
-			}
+			case AppState.None: {}
 			case AppState.Loader: {				
 				loaderScreen.render(g);				
 			}			 
 			case AppState.Work: {
-				currentScene.render(g);
+				for (visual in visuals) {
+					visual.render(g);
+				}
 			}			 
 		}
 		
