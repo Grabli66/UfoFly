@@ -105,7 +105,7 @@ class Game {
 			windowHeight: DEFAULT_WINDOW_HEIGHT
 		};
 		 
-		onConfig(configOptions);
+		onConfig(configOptions);				
 		
 		System.init(configOptions.windowName, configOptions.windowWidth, configOptions.windowHeight, function () {
 			var bufferOptions = {				
