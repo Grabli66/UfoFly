@@ -1,3 +1,3 @@
-class Camera {
+class Camera extends Spatial {
 	
 }
