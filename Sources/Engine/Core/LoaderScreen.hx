@@ -21,7 +21,7 @@ class LoaderScreen {
 	*	Возращает название размера буффера. Пример: 1024x768
 	*/
 	private function getResolutionName(): String {
-		return Game.getApp().getWidth() + 'x' + Game.getApp().getHeight();
+		return Engine.getWidth() + 'x' + Engine.getHeight();
 	}
 	
 	/*
@@ -30,7 +30,7 @@ class LoaderScreen {
 	private function checkComplete() {
 		if (currentIndex >= total) {			
 			if (onCompleteCall != null) {				
-				Game.getApp().setTimeout(options.delayAfter, onCompleteCall);				
+				Engine.setTimeout(options.delayAfter, onCompleteCall);				
 			}
 		}
 	}

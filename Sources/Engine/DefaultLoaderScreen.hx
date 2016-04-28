@@ -8,12 +8,13 @@ class DefaultLoaderScreen extends LoaderScreen {
 	private var progressWidth:Int = 600;
 	private var progressHeight:Int = 15;	
 	private var padding:Int = 3;
-	
+		
 	public override function render(g: Graphics) {
+		var color = g.color;		
 		g.clear(bgColor);		
 		g.color = progressBgColor;	
-		var center = Game.getApp().getCenter();
-		var width = Game.getApp().getWidth();
+		var center = Engine.getCenter();
+		var width = Engine.getWidth();
 		var px = center.x - progressWidth / 2;
 		var py = center.y - progressHeight / 2;		
 		g.fillRect(px, py, progressWidth, progressHeight);
@@ -21,5 +22,6 @@ class DefaultLoaderScreen extends LoaderScreen {
 		g.color = progressColor;
 		var pbw = (progressWidth - padding * 2) * (currentIndex / total);		
 		g.fillRect(px + padding, py + padding, pbw, progressHeight - padding * 2);
+		g.color = color;			
 	}
 }

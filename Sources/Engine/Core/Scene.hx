@@ -5,5 +5,6 @@ import kha.Key;
 class Scene {
 	public function new() {}	
 	public function enterScene() {}	
-	public function leaveScene() {}		
+	public function leaveScene() {}
+	public function update(dt: FastFloat) {} 		
 }
