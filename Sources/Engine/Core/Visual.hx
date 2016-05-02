@@ -4,7 +4,7 @@ import kha.Image;
 /*
 *	Класс визуального объекта
 */
-class Visual extends Object2d {
+class Visual extends Object2d implements IVisual {
 	// Отображаемая картинка
 	private var image:Image;
 	// Используется ли объект

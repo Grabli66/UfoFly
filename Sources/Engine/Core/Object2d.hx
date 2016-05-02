@@ -4,7 +4,7 @@ import kha.math.FastVector2;
 /*
 *	Геометрический объект
 */
-class Object2d {
+class Object2d implements IObject2d {
 	// Позиция объекта
 	private var position = new FastVector2(0,0);
 	// Угол поворота

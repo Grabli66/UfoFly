@@ -34,7 +34,7 @@ class UfoApp extends Game {
 			sprite = new Sprite(Assets.images.ufo_1024x768);
 			
 			Engine.notifyUpdate(function(dt: FastFloat) {
-			//	visual.move(10 * dt, 10 * dt);
+				sprite.move(10 * dt, 10 * dt);
 			});						
 		});		
 	}

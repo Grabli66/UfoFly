@@ -33,8 +33,8 @@ class Game {
 		onConfig(configOptions);				
 		Engine.createWindow(configOptions.windowName, configOptions.windowWidth, configOptions.windowHeight, function() {
 			var bufferOptions = {				
-				bufferWidth: System.pixelWidth,
-				bufferHeight: System.pixelHeight
+				bufferWidth: System.windowWidth(),
+				bufferHeight: System.windowHeight()
 			}; 			
 			onChooseBufferSize(bufferOptions);
 			Engine.initBackbuffer(bufferOptions.bufferWidth, bufferOptions.bufferHeight);

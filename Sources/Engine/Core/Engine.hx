@@ -44,7 +44,11 @@ class Engine {
 	*	Создает окно для игры	
 	*/
 	public static function createWindow(name: String, width: Int, height: Int, onComplete: Void->Void) {
-		System.init(name, width, height, function () {			 							
+		System.init({
+			title: name,
+			width: width,
+			height: height
+		},  function () {			 							
 			onComplete();
 		});
 	}	
