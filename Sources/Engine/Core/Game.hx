@@ -1,3 +1,5 @@
+package;
+
 import kha.System;
 import kha.FastFloat;
 import kha.math.FastVector2;
@@ -59,7 +61,7 @@ class Game {
 	* Загружает ресурсы и отображает окно загрузки
 	*/ 
 	public function loadAssets(loader: LoaderScreen, onComplete: Void->Void) {
-		Engine.loadAssets(loader, onComplete);
+		Engine.assets.loadAssets(loader, onComplete);
 	}	
 	/*
 	*	Вызывается при выборе размера буффера

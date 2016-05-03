@@ -1,3 +1,5 @@
+package;
+
 import kha.System;
 import kha.Color;
 import kha.Image;
@@ -9,14 +11,6 @@ import kha.Scheduler;
 import kha.Scaler;
 
 /*
-*	Состояние движка
-*/
-enum EngineState {
-	None;  // Ничего не происходит
-	Loader; // Происходит загрузка ресурсов
-	Work; // Обычная работа
-}
-/*
 *	Движок
 */
 class Engine {
@@ -27,7 +21,7 @@ class Engine {
 	// Визульные объекты
 	private static var visuals = new Array<Visual>();
 	// Обработчики логики
-	private static var controllers = new Array<FastFloat->Void>();
+	private static var controllers = new Array<Controller>();
 	// Таймауты	
 	private static var timeouts = new Array<TimeoutData>();
 	// Предыдущее время, для расчета дельты
@@ -37,9 +31,15 @@ class Engine {
 	// Текущая сцена
 	private static var currentScene: Scene;
 	// Состояние игры
-	private static var engineState: EngineState;		
-	// Окно загрузки ресурсов
-	private static var loaderScreen: LoaderScreen;
+	private static var engineState: EngineState;
+	// Менеджер ресурсов
+	public static var assets: AssetManager;
+	/*
+	*	Инициализирует менеджеры
+	*/
+	private static function initManagers() {
+		assets = new AssetManager();
+	}
 	/*
 	*	Создает окно для игры	
 	*/
@@ -48,10 +48,17 @@ class Engine {
 			title: name,
 			width: width,
 			height: height
-		},  function () {			 							
+		},  function () {
+			initManagers();			 							
 			onComplete();
 		});
-	}	
+	}
+	/*
+	*	Устанавливает состояние движка
+	*/
+	public static function setState(state: EngineState) {
+		engineState = state;
+	}
 	/*
 	*	Инициализирует буффер для рисования
 	*/
@@ -121,25 +128,26 @@ class Engine {
 	public static function setScene(name: String) {
 		if (currentScene != null) currentScene.leaveScene();
 		currentScene = scenes.get(name);
+		currentScene.enterScene();
 		engineState = EngineState.Work;		
 	}
 	/*
-	* Загружает ресурсы и отображает окно загрузки
-	*/ 
-	public static function loadAssets(loader: LoaderScreen, onComplete: Void->Void) {
-		loaderScreen = loader;
-		loaderScreen.onComplete(function() {			
-			onComplete();
-			engineState = EngineState.Work;
-		});
-		engineState = EngineState.Loader;
-		loaderScreen.run();
+	*	Добавляет контроллер
+	*/
+	public static function addController(controller: Controller):Void {
+		controllers.push(controller);
 	}
 	/*
-	*	Добавляет обработчик логики
+	*	Удаляет контроллер
 	*/
-	public static function notifyUpdate(onUpdate: FastFloat->Void) {
-		controllers.push(onUpdate);
+	public static function removeController(controller: Controller):Void {
+		controllers.remove(controller);
+	}
+	/*
+	*	Удаляет все контроллеры
+	*/
+	public static function clearControllers():Void {
+		controllers = new Array<Controller>();
 	}
 	/*
 	*	Обновляет логику игры
@@ -159,8 +167,14 @@ class Engine {
 			}
 		}
 		
+		// Обновляет все сцены
+		for (scene in scenes) {
+			scene.update(dt);
+		}
+		
+		// Обновляет все контроллеры
 		for (controller in controllers) {
-			controller(dt);
+			controller.update(dt);
 		}
 	}
 	/*
@@ -174,8 +188,8 @@ class Engine {
 		
 		switch (engineState) {
 			case EngineState.None: {}
-			case EngineState.Loader: {				
-				loaderScreen.render(g);				
+			case EngineState.AssetManager: {				
+				assets.render(g);				
 			}			 
 			case EngineState.Work: {
 				for (visual in visuals) {

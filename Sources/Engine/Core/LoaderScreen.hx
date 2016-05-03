@@ -1,8 +1,13 @@
+package;
+
 import kha.graphics2.Graphics;
 import kha.Color;
 import kha.Assets;
 import kha.FastFloat;
 
+/*
+*	Экран загрузки ресурсов
+*/
 class LoaderScreen {		
 	private var currentIndex: Int = 0;
 	private var total: Int = 0;

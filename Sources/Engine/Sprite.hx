@@ -7,8 +7,6 @@ import kha.FastFloat;
 class Sprite implements IVisual {
 	// Визуальный объект
 	private var visual: Visual;
-	// Проверяет коллизии
-	// private var collider: Collider;
 	
 	public function new(image: Image) {		
 		visual = Engine.recycleVisual(image);
