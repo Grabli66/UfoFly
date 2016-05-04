@@ -6,7 +6,7 @@ class GameScene extends Scene {
     
     public function new() {
         super();
-        player = new Sprite(Assets.images.asteroid_1024x768);
+        player = new Sprite(Engine.assets.getImage("ufo"));
     }
     
     public override function update(dt: FastFloat) {

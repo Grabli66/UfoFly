@@ -4,15 +4,20 @@ import kha.graphics2.Graphics;
 import kha.Color;
 import kha.Assets;
 import kha.FastFloat;
+import kha.Image;
 
 /*
 *	Экран загрузки ресурсов
 */
-class LoaderScreen {		
+class LoaderScreen {
+	// Количество загруженных ресурсов		
 	private var currentIndex: Int = 0;
+	// Всего ресурсов
 	private var total: Int = 0;
-	private var onCompleteCall: Void->Void;
-	
+	// Обратный вызов при загрузке ресурсов
+	private var onCompleteCall: LoadedAssets->Void;
+	// Загруженные ресурсы
+	private var loadedAssets: LoadedAssets;
 	// Задержка после загрузки всех ресурсов
 	private var options: LoaderOptions;	
 			
@@ -20,6 +25,9 @@ class LoaderScreen {
 		this.options = options;				
 		total += options.images.length;
 		if (options.delayAfter == null) options.delayAfter = 0;
+		loadedAssets = {
+			images: new Array<LoadedImage>()
+		};
 	}
 	
 	/*
@@ -35,7 +43,9 @@ class LoaderScreen {
 	private function checkComplete() {
 		if (currentIndex >= total) {			
 			if (onCompleteCall != null) {				
-				Engine.setTimeout(options.delayAfter, onCompleteCall);				
+				Engine.setTimeout(options.delayAfter, function() {
+					onCompleteCall(loadedAssets);
+				});				
 			}
 		}
 	}
@@ -46,9 +56,13 @@ class LoaderScreen {
 	public function run() {
 		var suffix = if (options.useResolutionFolders) getResolutionName() else '';
 		
-		for (img in options.images) {			
-			var name = '${img}_${suffix}';
-			Assets.loadImage(name, function(im) {
+		for (imgName in options.images) {			
+			var name = '${imgName}_${suffix}';
+			Assets.loadImage(name, function(image) {
+				loadedAssets.images.push({
+					name: imgName,
+					image: image
+				});
 				currentIndex += 1;
 				checkComplete();				
 			});
@@ -58,7 +72,7 @@ class LoaderScreen {
 	/*
 	*	Добавляет обратный вызов при завершении
 	*/		
-	public function onComplete(callBack: Void->Void) {		
+	public function onComplete(callBack: LoadedAssets->Void) {		
 		onCompleteCall = callBack;		
 	}		
 	
