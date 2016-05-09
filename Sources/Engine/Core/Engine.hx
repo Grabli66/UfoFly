@@ -18,6 +18,8 @@ class Engine {
 	private static var clearColor = Color.Black;
 	// Буффер для рисования
 	private static var backbuffer: Image;
+	// Виды
+	private static var views = new Map<String, View>();
 	// Визульные объекты
 	private static var visuals = new Array<Visual>();
 	// Обработчики логики
@@ -71,6 +73,20 @@ class Engine {
 	public static function startRender() {
 		System.notifyOnRender(render);
 	}	
+	/*
+	*	Возвращает вид
+	*/
+	public static function getView(name: String): View {
+		return views[name];
+	}
+	/*
+	*	Создает вид
+	*/
+	public static function createView(name: String, x: FastFloat, y: FastFloat, width: FastFloat, height: FastFloat): View {
+		var view = new View();
+		views.set(name, view);
+		return view;
+	}
 	/*
 	*	Возвращает свободный визуальный объект
 	*/
@@ -192,6 +208,9 @@ class Engine {
 				assets.render(g);				
 			}			 
 			case EngineState.Work: {
+				// Работа камеры
+				
+				// Рисует визуальные объекты
 				for (visual in visuals) {
 					visual.render(g);
 				}
